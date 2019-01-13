@@ -1,0 +1,7 @@
+includes: ['layer:basic', 'layer:apt']  # if you use any interfaces, add them here
+options:
+  apt:
+    packages:
+      - gridengine-client
+      - gridengine-exec
+
