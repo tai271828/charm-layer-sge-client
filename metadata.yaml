@@ -2,7 +2,7 @@ name: sge-client
 summary: Charm to build a SGE master node
 maintainer: Taihsiang Ho (tai271828) <tai271828@gmail.com>
 description: |
-  Charm to build a SGE master node.
+  Charm to build a SGE client node.
 tags:
   # https://jujucharms.com/docs/stable/authors-charm-metadata
   - big_data
