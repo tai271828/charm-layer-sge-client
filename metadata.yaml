@@ -7,4 +7,7 @@ tags:
   # https://jujucharms.com/docs/stable/authors-charm-metadata
   - big_data
   - ops
+requires:
+  master-location-detector:
+    interface: sge-cluster
 

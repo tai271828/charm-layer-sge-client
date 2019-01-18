@@ -32,3 +32,10 @@ def set_message_hello():
     # Signal that we know the version of hello
     #set_flag('hello.version.set')
 
+@when('endpoint.master-location-detector.new-master')
+def update_mater_config():
+    master_config = endpoint_from_flag('endpoint.master-location-detector.new-master')
+    for master in master_config.masters():
+        hookenv.log('master: {}'.format(website['hostname']))
+    clear_flag('endpoint.master-location-detector.new-master')
+
