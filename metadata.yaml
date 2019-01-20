@@ -8,6 +8,6 @@ tags:
   - big_data
   - ops
 requires:
-  sge-cluster:
+  master-config-receiver:
     interface: sge-cluster
 

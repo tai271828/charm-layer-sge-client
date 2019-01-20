@@ -11,21 +11,17 @@ def install_sge_layer():
     # Set the upstream version of hello for juju status.
     application_version_set(get_upstream_version('gridengine-client'))
 
-    # Run hello and get the message
-    #message = sp.check_output('hello', stderr=sp.STDOUT)
-
     # Set the active status with the message
     status_set('active', 'gridengine-client is installed' )
 
     # Signal that we know the version of hello
-    #set_flag('hello.version.set')
     set_flag('sge-client.installed')
 
-@when('endpoint.sge-cluster.new-master')
+@when('endpoint.master-config-receiver.new-master')
 def update_mater_config():
-    master_config = endpoint_from_flag('endpoint.sge-cluster.new-master')
+    master_config = endpoint_from_flag('endpoint.master-config-receiver.new-master')
     print("hookenv: {}".format(hookenv))
     for master in master_config.masters():
         hookenv.log('master: {}'.format(master['hostname']))
-    clear_flag('endpoint.sge-cluster.new-master')
+    clear_flag('endpoint.master-config-receiver.new-master')
 
