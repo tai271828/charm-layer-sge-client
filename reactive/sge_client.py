@@ -1,25 +1,13 @@
-from charms.reactive import when, when_not, set_flag
+from charms.reactive import when, when_not, set_flag, clear_flag
+from charms.reactive.relations import endpoint_from_flag
+from charmhelpers.core import hookenv
 from charmhelpers.core.hookenv import application_version_set, status_set
 from charmhelpers.fetch import get_upstream_version
 import subprocess as sp
 
 @when_not('sge-client.installed')
-def install_sge_layer():
-    # Do your setup here.
-    #
-    # If your charm has other dependencies before it can install,
-    # add those as @when() clauses above., or as additional @when()
-    # decorated handlers below
-    #
-    # See the following for information about reactive charms:
-    #
-    #  * https://jujucharms.com/docs/devel/developer-getting-started
-    #  * https://github.com/juju-solutions/layer-basic#overview
-    #
-    set_flag('sge-client.installed')
-
 @when('apt.installed.gridengine-client')
-def set_message_hello():
+def install_sge_layer():
     # Set the upstream version of hello for juju status.
     application_version_set(get_upstream_version('gridengine-client'))
 
@@ -31,11 +19,13 @@ def set_message_hello():
 
     # Signal that we know the version of hello
     #set_flag('hello.version.set')
+    set_flag('sge-client.installed')
 
-@when('endpoint.master-location-detector.new-master')
+@when('endpoint.sge-cluster.new-master')
 def update_mater_config():
-    master_config = endpoint_from_flag('endpoint.master-location-detector.new-master')
+    master_config = endpoint_from_flag('endpoint.sge-cluster.new-master')
+    print("hookenv: {}".format(hookenv))
     for master in master_config.masters():
-        hookenv.log('master: {}'.format(website['hostname']))
-    clear_flag('endpoint.master-location-detector.new-master')
+        hookenv.log('master: {}'.format(master['hostname']))
+    clear_flag('endpoint.sge-cluster.new-master')
 

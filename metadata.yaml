@@ -8,6 +8,6 @@ tags:
   - big_data
   - ops
 requires:
-  master-location-detector:
+  sge-cluster:
     interface: sge-cluster
 
