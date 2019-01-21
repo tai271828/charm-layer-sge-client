@@ -7,7 +7,10 @@ tags:
   # https://jujucharms.com/docs/stable/authors-charm-metadata
   - big_data
   - ops
+  - sge
+series:
+  - xenial
 requires:
-  master-config-receiver:
+  config-exchanger:
     interface: sge-cluster
 

@@ -6,6 +6,7 @@ from charmhelpers.core.hookenv import application_version_set, status_set
 from charmhelpers.fetch import get_upstream_version
 from charms.layer import sge_client
 
+
 @when_not('sge-client.installed')
 @when('apt.installed.gridengine-client')
 def install_sge_client():
@@ -16,20 +17,26 @@ def install_sge_client():
 
     set_flag('sge-client.installed')
 
-@when('endpoint.master-config-receiver.new-master')
+
+@when('endpoint.config-exchanger.new-exchanger')
 def update_mater_config():
-    master_config = endpoint_from_flag('endpoint.master-config-receiver.new-master')
-    print("hookenv: {}".format(hookenv))
-    for master in master_config.masters():
+    master_config = endpoint_from_flag('endpoint.config-exchanger.new-exchanger')
+    for master in master_config.exchangers():
         hookenv.log('master: {}'.format(master['hostname']))
 
     cmd = ['mkdir', '-p', '/usr/share/charm-sge-cluster/']
     sp.check_call(cmd)
     filename = '/usr/share/charm-sge-cluster/master_address'
     with open(filename, 'w') as fout:
-        fout.write(master['hostname'])
+        fout.write(master['hostname'] + "\n")
 
     sge_client.connect_sge_master(master['hostname'])
 
-    clear_flag('endpoint.master-config-receiver.new-master')
+    clear_flag('endpoint.config-exchanger.new-exchanger')
+
+
+@when('endpoint.config-exchanger.joined')
+def publish_host_info():
+    endpoint_client = endpoint_from_flag('endpoint.config-exchanger.joined')
+    endpoint_client.publish_info(hookenv.unit_public_ip())
 
