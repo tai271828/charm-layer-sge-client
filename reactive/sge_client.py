@@ -4,10 +4,11 @@ from charms.reactive.relations import endpoint_from_flag
 from charmhelpers.core import hookenv
 from charmhelpers.core.hookenv import application_version_set, status_set
 from charmhelpers.fetch import get_upstream_version
+from charms.layer import sge_client
 
 @when_not('sge-client.installed')
 @when('apt.installed.gridengine-client')
-def install_sge_layer():
+def install_sge_client():
     application_version_set(get_upstream_version('gridengine-client'))
 
     # Set the active status with the message
@@ -27,6 +28,8 @@ def update_mater_config():
     filename = '/usr/share/charm-sge-cluster/master_address'
     with open(filename, 'w') as fout:
         fout.write(master['hostname'])
+
+    sge_client.connect_sge_master(master['hostname'])
 
     clear_flag('endpoint.master-config-receiver.new-master')
 
