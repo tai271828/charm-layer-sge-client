@@ -7,8 +7,8 @@ from charmhelpers.fetch import get_upstream_version
 from charms.layer import sge_client
 
 
-@when_not('sge-client.installed')
 @when('apt.installed.gridengine-client')
+@when_not('sge-client.installed')
 def install_sge_client():
     application_version_set(get_upstream_version('gridengine-client'))
 
