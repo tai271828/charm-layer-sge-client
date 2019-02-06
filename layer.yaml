@@ -7,4 +7,6 @@ options:
     packages:
       - gridengine-client
       - gridengine-exec
+      - mpich
+      - nfs-common
 

@@ -8,6 +8,9 @@ from charms.layer import sge_client
 
 
 @when('apt.installed.gridengine-client')
+@when('apt.installed.gridengine-exec')
+@when('apt.installed.mpich')
+@when('apt.installed.nfs-common')
 @when_not('sge-client.installed')
 def install_sge_client():
     application_version_set(get_upstream_version('gridengine-client'))
