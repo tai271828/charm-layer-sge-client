@@ -16,7 +16,7 @@ def install_sge_client():
     application_version_set(get_upstream_version('gridengine-client'))
 
     # Set the active status with the message
-    status_set('active', 'SGE client is installed' )
+    status_set('active', 'SGE client is installed')
 
     set_flag('sge-client.installed')
 
@@ -25,7 +25,8 @@ def install_sge_client():
 def update_master_config():
     cmd = ['mkdir', '-p', '/usr/share/charm-sge-cluster/']
     sp.check_call(cmd)
-    master_config = endpoint_from_flag('endpoint.config-exchanger.new-exchanger')
+    flag = 'endpoint.config-exchanger.new-exchanger'
+    master_config = endpoint_from_flag(flag)
     for master in master_config.exchangers():
         hookenv.log('master: {}'.format(master['hostname']))
 
@@ -34,6 +35,8 @@ def update_master_config():
             fout.write(master['hostname'] + "\n")
 
         sge_client.connect_sge_master(master['hostname'])
+
+    sge_client.aggregate_mpi_hosts()
 
     clear_flag('endpoint.config-exchanger.new-exchanger')
 

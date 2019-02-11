@@ -3,10 +3,15 @@ import subprocess as sp
 __all__ = ['connect_sge_master']
 
 
+AUTH_KEYS_PATH = '/home/ubuntu/.ssh/authorized_keys'
+KNOWN_HOSTS_PATH = '/home/ubuntu/.ssh/known_hosts'
+CLIENT_ADDRESS_PATH = '/home/ubuntu/mpi_nfs_mnt/host_file'
+
+
 def connect_sge_master(master_address=None):
     _connect_sge_master(master_address)
     _connect_nfs_server(master_address)
-    setup_ssh_key_over_nodes(master_address)
+    _setup_ssh_server_for_master(master_address)
 
 
 def _connect_sge_master(address):
@@ -26,32 +31,54 @@ def _connect_nfs_server(address):
     sp.run(cmd, shell=True)
 
 
-def setup_ssh_key_over_nodes(address):
+def _setup_ssh_server_for_master(address):
     cmd = 'mkdir /home/ubuntu/.ssh/'
-    sp.run(cmd, shell=True)
-
-    cmd = 'chmod 700 /home/ubuntu/.ssh/'
     sp.run(cmd, shell=True)
 
     # TODO: silliy and security concern method. change me later by publish_info
     cmd = 'cp /home/ubuntu/mpi_nfs_mnt/keys/* /home/ubuntu/.ssh/'
     sp.run(cmd, shell=True)
 
-    cmd = 'cat /home/ubuntu/.ssh/id_rsa.pub >> /home/ubuntu/.ssh/authorized_keys'
+    cmd = 'cat /home/ubuntu/.ssh/id_rsa.pub >> ' + AUTH_KEYS_PATH
     sp.run(cmd, shell=True)
 
-    cmd = 'chmod 600 /home/ubuntu/.ssh/authorized_keys'
+    #cmd = 'chmod 600 ' + AUTH_KEYS_PATH
+    #sp.run(cmd, shell=True)
+
+    cmd = 'sh-keyscan -t rsa localhost >> ' + KNOWN_HOSTS_PATH
     sp.run(cmd, shell=True)
 
-    cmd = 'sh-keyscan -t rsa localhost >> /home/ubuntu/.ssh/known_hosts'
+    cmd = 'ssh-keyscan -t rsa 127.0.0.1 >> ' + KNOWN_HOSTS_PATH
     sp.run(cmd, shell=True)
 
-    cmd = 'ssh-keyscan -t rsa 127.0.0.1 >> /home/ubuntu/.ssh/known_hosts'
+    cmd = 'ssh-keyscan -t rsa ' + address + ' >> ' + KNOWN_HOSTS_PATH
     sp.run(cmd, shell=True)
 
-    cmd = 'ssh-keyscan -t rsa ' + address + ' >> /home/ubuntu/.ssh/known_hosts'
+    #cmd = 'chmod 600 ' + KNOWN_HOSTS_PATH
+    #sp.run(cmd, shell=True)
+
+    cmd = 'chown ubuntu -R /home/ubuntu/.ssh/'
     sp.run(cmd, shell=True)
 
-    cmd = 'chmod 600 /home/ubuntu/.ssh/known_hosts'
-    sp.run(cmd, shell=True)
+
+def aggregate_mpi_hosts():
+    # aggregate hosts to compose of a MPI cluster
+    _scan_all_mpi_host_keys()
+    # we just ask for the client nodes to be the MPI computing hosts
+    address = CLIENT_ADDRESS_PATH
+    # TODO: could be done for only once. no need to create this file each time
+    with open('/etc/profile.d/mpi-host-file.sh', 'wt') as fout:
+        fout.write('export MPI_HOSTS=' + address + "\n")
+
+
+def _scan_all_mpi_host_keys():
+    # TODO: just a prototype, should think about how to remove the duplicates
+    with open(CLIENT_ADDRESS_PATH, 'rt') as fin:
+        lines = fin.readlines()
+        for line in lines:
+            # should be an IP address so there are 4 digits at least (IPv4)
+            ls = line.strip()
+            if len(ls) > 4:
+                cmd = 'ssh-keyscan -t rsa ' + ls + ' >> ' + KNOWN_HOSTS_PATH
+                sp.run(cmd, shell=True)
 
