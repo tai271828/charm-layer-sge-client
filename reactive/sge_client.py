@@ -36,9 +36,16 @@ def update_master_config():
 
         sge_client.connect_sge_master(master['hostname'])
 
-    sge_client.aggregate_mpi_hosts()
-
     clear_flag('endpoint.config-exchanger.new-exchanger')
+
+
+# still very buggy to have duplicate entries in the known_hosts
+@when('endpoint.config-exchanger.new-mpi-host')
+def update_mpi_cluster_info():
+    # aggregate the mpi host info when the host info is published
+    sge_client.aggregate_mpi_hosts()
+    hookenv.log('Aggregated MPI hosts.')
+    clear_flag('endpoint.config-exchanger.new-mpi-host')
 
 
 @when('endpoint.config-exchanger.joined')
