@@ -5,13 +5,13 @@ __all__ = ['connect_sge_master']
 
 AUTH_KEYS_PATH = '/home/ubuntu/.ssh/authorized_keys'
 KNOWN_HOSTS_PATH = '/home/ubuntu/.ssh/known_hosts'
-CLIENT_ADDRESS_PATH = '/home/ubuntu/mpi_nfs_mnt/host_file'
+CLIENT_ADDRESS_PATH = '/home/ubuntu/mpi_host_list'
 
 
 def connect_sge_master(master_address=None):
     _connect_sge_master(master_address)
     _connect_nfs_server(master_address)
-    _setup_ssh_server_for_master(master_address)
+    #_setup_ssh_server_for_master(master_address)
 
 
 def _connect_sge_master(address):
@@ -22,8 +22,7 @@ def _connect_sge_master(address):
     sp.run('service gridengine-exec restart', shell=True)
 
 
-def _connect_nfs_server(address):
-    dir_abs = '/home/ubuntu/mpi_nfs_mnt'
+def _connect_nfs_server(address, dir_abs='/home/ubuntu'):
     cmd = 'mkdir ' + dir_abs
     sp.run(cmd, shell=True)
 
