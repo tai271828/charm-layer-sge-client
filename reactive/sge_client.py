@@ -51,5 +51,5 @@ def update_mpi_cluster_info():
 @when('endpoint.config-exchanger.joined')
 def publish_host_info():
     endpoint_client = endpoint_from_flag('endpoint.config-exchanger.joined')
-    endpoint_client.publish_info(hookenv.unit_public_ip())
+    endpoint_client.publish_info(hookenv.unit_private_ip())
 
