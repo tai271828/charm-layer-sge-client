@@ -28,13 +28,13 @@ def update_master_config():
     flag = 'endpoint.config-exchanger.new-exchanger'
     master_config = endpoint_from_flag(flag)
     for master in master_config.exchangers():
-        hookenv.log('master: {}'.format(master['unit_public_ip']))
+        hookenv.log('master: {}'.format(master['unit_private_ip']))
 
         filename = '/usr/share/charm-sge-cluster/master_address'
         with open(filename, 'a') as fout:
-            fout.write(master['unit_public_ip'] + "\n")
+            fout.write(master['unit_private_ip'] + "\n")
 
-        sge_client.connect_sge_master(master['unit_public_ip'])
+        sge_client.connect_sge_master(private_ip=master['unit_private_ip'])
 
     clear_flag('endpoint.config-exchanger.new-exchanger')
 

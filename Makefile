@@ -9,6 +9,9 @@ deploy-clean-model: build
 deploy: build
 	juju deploy $(CHARM_BUILD_DIR)/$(CHARM_NAME) --series xenial
 
+redeploy:
+	juju deploy $(CHARM_BUILD_DIR)/$(CHARM_NAME) --series xenial
+
 build: clean
 	tox -e build
 

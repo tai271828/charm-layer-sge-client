@@ -8,9 +8,11 @@ KNOWN_HOSTS_PATH = '/home/ubuntu/.ssh/known_hosts'
 CLIENT_ADDRESS_PATH = '/home/ubuntu/mpi_host_list'
 
 
-def connect_sge_master(master_address=None):
-    _connect_sge_master(master_address)
-    _connect_nfs_server(master_address)
+def connect_sge_master(private_ip, public_ip=None):
+    if not public_ip:
+        public_ip = private_ip
+    _connect_sge_master(public_ip)
+    _connect_nfs_server(private_ip)
     #_setup_ssh_server_for_master(master_address)
 
 
