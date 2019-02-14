@@ -30,6 +30,7 @@ def _connect_nfs_server(address, dir_abs='/home/ubuntu'):
     sp.run(cmd, shell=True)
 
 
+# TODO: this seems not to use anymore
 def _setup_ssh_server_for_master(address):
     cmd = 'mkdir /home/ubuntu/.ssh/'
     sp.run(cmd, shell=True)
