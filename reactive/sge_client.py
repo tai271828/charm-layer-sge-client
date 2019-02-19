@@ -11,8 +11,12 @@ from charms.layer import sge_client
 @when('apt.installed.gridengine-exec')
 @when('apt.installed.mpich')
 @when('apt.installed.nfs-common')
+@when('apt.installed.libarchive-dev')
 @when_not('sge-client.installed')
 def install_sge_client():
+    hookenv.log('Begin to boostrap a client node.')
+    sge_client.build_singularity()
+
     application_version_set(get_upstream_version('gridengine-client'))
 
     # Set the active status with the message

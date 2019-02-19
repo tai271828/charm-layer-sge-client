@@ -10,4 +10,5 @@ options:
       - gridengine-exec
       - mpich
       - nfs-common
+      - libarchive-dev
 

@@ -1,3 +1,4 @@
+import shutil
 import subprocess as sp
 
 __all__ = ['connect_sge_master']
@@ -14,6 +15,13 @@ def connect_sge_master(private_ip, public_ip=None):
     _connect_sge_master(public_ip)
     _connect_nfs_server(private_ip)
     #_setup_ssh_server_for_master(master_address)
+
+
+def build_singularity():
+    dir_bin = '/usr/local/sbin/'
+    shutil.copy2('bin/build-singularity.sh', dir_bin)
+    cmd = '/usr/local/sbin/build-singularity.sh'
+    sp.run(cmd)
 
 
 def _connect_sge_master(address):
